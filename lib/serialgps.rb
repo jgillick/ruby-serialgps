@@ -40,37 +40,37 @@ class SerialGPS
 
 	# Reads NMEA until at least the GGA and RMC data has been loaded
 	#
-	# last_nmea::  					The last NMEA sentence name (without "$GP") parsed with the read method.
-	# quality::							0 = invalid, 1 = GPS fix, 2 = DGPS fix
-	# validity::						A = ok, V = invalid
-	# latitude::						Latitude
-	# lat_ref::							North/South (N/S)
-	# longitude::						Longitude
-	# long_ref::						East/West (E/W)
-	# altitude::						Current altitude
-	# alt_unit::						Altitude height unit of measure (i.e. M = Meters)
-	# speed::								Speed over ground in knots
-	# heading::							Heading, in degrees
-	# course::							Course over ground in degrees
-	# time::								Current time formated as HHMMSS.SS -- use date_time to get the parsed version
-	# date::								Current date formated as DDMMYY -- use date_time to get the parsed version
+	# last_nmea::  				The last NMEA sentence name (without "$GP") parsed with the read method.
+	# quality::					0 = invalid, 1 = GPS fix, 2 = DGPS fix
+	# validity::				A = ok, V = invalid
+	# latitude::				Latitude
+	# lat_ref::					North/South (N/S)
+	# longitude::				Longitude
+	# long_ref::				East/West (E/W)
+	# altitude::				Current altitude
+	# alt_unit::				Altitude height unit of measure (i.e. M = Meters)
+	# speed::					Speed over ground in knots
+	# heading::					Heading, in degrees
+	# course::					Course over ground in degrees
+	# time::					Current time formated as HHMMSS.SS -- use date_time to get the parsed version
+	# date::					Current date formated as DDMMYY -- use date_time to get the parsed version
 	# local_hour_offset::		Local zone description, 00 to +/- 13 hours 
-	# local_minute_offset::	Local zone minutes description (same sign as hours) 
-	# num_sat::							The number of satellites in view
-	# satellites::					An array with id, elevation, azimuth and SNR for each satellite
-	# height_geoid::				Height of geoid above WGS84 ellipsoid
+	# local_minute_offset::		Local zone minutes description (same sign as hours) 
+	# num_sat::					The number of satellites in view
+	# satellites::				An array with id, elevation, azimuth and SNR for each satellite
+	# height_geoid::			Height of geoid above WGS84 ellipsoid
 	# height_geoid_unit::		Unit of measure (i.e. M = Meters)
-	# last_dgps::						Time since last DGPS update
-	# dgps::								DGPS reference station id
-	# mode::								M = Manual (forced to operate in 2D or 3D) A = Automatic (3D/2D)
+	# last_dgps::				Time since last DGPS update
+	# dgps::					DGPS reference station id
+	# mode::					M = Manual (forced to operate in 2D or 3D) A = Automatic (3D/2D)
 	# mode_dimension::			1 = Fix not available, 2 = 2D, 3 = 3D
-	# hdop::								Horizontal Dilution of Precision
-	# pdop::								Positional Dilution of Precision
-	# vdop::								Vertical Dilution of Precision
-	# msg_count::						Total number of messages of this type in this cycle
-	# msg_num::							Message number
-	# variation::						Magnetic variation
-	# var_direction::				Magnetic variation direction (i.e E = East)
+	# hdop::					Horizontal Dilution of Precision
+	# pdop::					Positional Dilution of Precision
+	# vdop::					Vertical Dilution of Precision
+	# msg_count::				Total number of messages of this type in this cycle
+	# msg_num::					Message number
+	# variation::				Magnetic variation
+	# var_direction::			Magnetic variation direction (i.e E = East)
 	#
 	def get_data
 		data = {}
@@ -115,7 +115,7 @@ class SerialGPS
 			unless data[:last_nmea].nil?
 				@collected << data[:last_nmea]
 				@collected.uniq!
-				@data.merge!(nmea)	
+				@data.merge!(data)	
 				
 				break
 			end
@@ -177,50 +177,45 @@ class SerialGPS
 				end
 				errors = 0
 				
-				# Get date		
-				if data.key?(:time) && data.key?(:date)
-					date = self.date_time 
-					if date.nil?
-	          date = ""
-	  		  else
-	    		  date = date.strftime("%b %d %I:%M %p")
-	  		  end
-				else
-					output = false
-					next
+				# Get date
+				date = self.date_time 
+				unless date.nil?
+					date = date.strftime("%b %d %I:%M %p")
 				end
-	
-				$stdout.print "Time: #{date}	Satellites: #{data[:num_sat]}		Quality:#{data[:quality]}\n"
+				
+				num_sat = data[:num_sat] || 0
+				$stdout.print "Time: #{date}		Satellites: #{num_sat}		Quality:#{data[:quality]}\n"
 				$stdout.print "Latitude: #{data[:latitude]}#{data[:lat_ref]}"
 				$stdout.print "\tLongitude: #{data[:longitude]}#{data[:long_ref]}"
 				$stdout.print "\tElevation: #{data[:altitude]}#{data[:alt_unit]}\n"
 				rows += 3
 				
 				# Satellites
-				$stdout.print "-- Satellites --\n"
-				data[:num_sat].times do | i | 
-					
-					if data[:num_sat][:satellites].size > i
-						sat = data[:num_sat][:satellites][i]
-						rows += 1
+				if data.key?(:num_sat)
+					$stdout.print "-- Satellites --\n"
+					data[:num_sat].times do | i | 
 						
-						$stdout.print "#{sat[:id]}: "
-						$stdout.print "Elevation: #{sat[:elevation]}"
-						$stdout.print "\tAzimuth: #{sat[:azimuth]}\n"
+						if data[:num_sat][:satellites].size > i
+							sat = data[:num_sat][:satellites][i]
+							rows += 1
+							
+							$stdout.print "#{sat[:id]}: "
+							$stdout.print "Elevation: #{sat[:elevation]}"
+							$stdout.print "\tAzimuth: #{sat[:azimuth]}\n"
+						end
 					end
+					rows += 1
 				end
-				rows += 1
 			
-			rescue
+			rescue Exception => e
 				# Clear previous error
 				if errors > 0
 					$stdout.print "\e[1A\e[E\e[J"
 					errors = 0
 				end
-			
-				$stdout.print "#{$!}"
-				rows += 1
-				errors += 1	
+
+				$stdout.print "\nERROR: #{e.message}\n"
+				break
 			end
 			
 			$stdout.flush
@@ -229,6 +224,7 @@ class SerialGPS
 
 	# Returns a DateTime object representing the date and time provided by the GPS unit or NIL if this data is not available yet.
 	def date_time()
+		@data.inspect
 		if !@data.key?(:time) || @data[:time].empty? || !@data.key?(:date) || @data[:date].empty?
 			return nil
 		end
@@ -237,7 +233,7 @@ class SerialGPS
 		date = @data[:date]
 		time.gsub!(/\.[0-9]*$/, "") # remove decimals
 		datetime = "#{date} #{time} UTC"
-		puts datetime
+
 		date =  DateTime.strptime(datetime, "%d%m%y %H%M%S %Z")
 		date
 	end
@@ -278,27 +274,27 @@ class SerialGPS
 				data[:long_ref]			= line.shift
 				data[:quality]			= line.shift
 				data[:num_sat]			= line.shift.to_i
-				data[:hdop]					= line.shift
+				data[:hdop]				= line.shift
 				data[:altitude]			= line.shift
 				data[:alt_unit]			= line.shift
-				data[:height_geoid]	= line.shift
+				data[:height_geoid]		= line.shift
 				data[:height_geoid_unit] = line.shift
 				data[:last_dgps]		= line.shift
-				data[:dgps]					= line.shift
+				data[:dgps]				= line.shift
 	
 			when "RMC"
 				data[:last_nmea] = type
-				data[:time]				= line.shift
+				data[:time]			= line.shift
 				data[:validity]		= line.shift
 				data[:latitude]		= line.shift
 				data[:lat_ref]		= line.shift
 				data[:longitude]	= line.shift
 				data[:long_ref]		= line.shift
-				data[:speed]			= line.shift
-				data[:course]			= line.shift
-				data[:date]				= line.shift
+				data[:speed]		= line.shift
+				data[:course]		= line.shift
+				data[:date]			= line.shift
 				data[:variation]	= line.shift
-				data[:var_direction]	= line.shift
+				data[:var_direction] = line.shift
 				
 			when "GLL"
 				data[:last_nmea] 	= type
@@ -315,8 +311,8 @@ class SerialGPS
 				data[:lat_ref]		= line.shift
 				data[:longitude]	= line.shift
 				data[:long_ref]		= line.shift
-		  	line.shift # not used
-		  	line.shift # not used
+		  		line.shift # not used
+		  		line.shift # not used
 				data[:speed]			= line.shift
 				data[:course]			= line.shift
 				data[:variation]	= line.shift
@@ -348,20 +344,20 @@ class SerialGPS
 		  	data[:vdop]			= line.shift
 		  	
 			when "GSV"
-				data[:last_nmea] = type
+				data[:last_nmea] 	= type
 				data[:msg_count]	= line.shift
 				data[:msg_num]		= line.shift
 				data[:num_sat]		= line.shift.to_i
 				
 				# Satellite data
-		  	data[:satellites] ||= []
-		  	4.times do |i|
-		  		data[:satellites][i] ||= {}
+		  		data[:satellites] ||= []
+				4.times do |i|
+		  			data[:satellites][i] ||= {}
 		  		
 					data[:satellites][i][:elevation]	= line.shift
-			  	data[:satellites][i][:azimuth]		= line.shift
-			  	data[:satellites][i][:snr]				= line.shift
-		  	end
+					data[:satellites][i][:azimuth]		= line.shift
+					data[:satellites][i][:snr]			= line.shift
+				end
 		  	
 		  when "HDT"
 				data[:last_nmea] = type
