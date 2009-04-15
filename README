@@ -64,7 +64,7 @@ You need RubyGems 1.2.0 to install it remotely from the GitHub repository.
 
   gem sources -a http://gems.github.com
   
-  gem install ruby-serialgps
+  gem install jgillick-ruby-serialgps
   
 == Examples
 Here's a simple example of 
