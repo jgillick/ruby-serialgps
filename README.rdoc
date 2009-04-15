@@ -72,7 +72,7 @@ these strings into a DateTime object with the timezone set to UTC.
  	
  	...
  	
- 	gps.date_time
+	puts gps.date_time
 
 == Install
 
