@@ -21,7 +21,7 @@ you call one of those methods, more NMEA sentences will be parsed and added to t
 You may have to call <code>read</code> multiple times in a loop until your data is available.
 
 <code>get_data</code> is a wrapper function that will call <code>read</code> in a loop until <em>at least</em> the $GPGGA and $GPRMC 
-sentences are parsed.
+sentences are read.
 
 last_nmea::  			The last NMEA sentence name (without "$GP") parsed with the read method.
 quality::				0 = invalid, 1 = GPS fix, 2 = DGPS fix
