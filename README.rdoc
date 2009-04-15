@@ -2,10 +2,10 @@
 This library provides an easy way to get GPS data from your serial GPS unit. 
 
 == Description
-Uses ruby-serialport to connect to a standard serial GPS unit and parses the NMEA sentences into an easy to read hash.
+Uses ruby-serialport to connect to a standard serial GPS unit and parses the NMEA sentences into an easy to use hash.
 
-=== NMEA 
-Currently it only parses the following NMEA sentenses:
+=== NMEA Sentences
+Currently it only parses the following NMEA sentences:
 * $GPGGA
 * $GPRMC
 * $GPGLL
@@ -23,37 +23,37 @@ You may have to call <code>read</code> multiple times in a loop until your data 
 <code>get_data</code> is a wrapper function that will call <code>read</code> in a loop until <em>at least</em> the $GPGGA and $GPRMC 
 sentences are parsed.
 
-last_nmea::  					The last NMEA sentence name (without "$GP") parsed with the read method.
-quality::							0 = invalid, 1 = GPS fix, 2 = DGPS fix
-validity::						A = ok, V = invalid
-latitude::						Latitude
-lat_ref::							North/South (N/S)
-longitude::						Longitude
-long_ref::						East/West (E/W)
-altitude::						Current altitude
-alt_unit::						Altitude height unit of measure (i.e. M = Meters)
-speed::								Speed over ground in knots
-heading::							Heading, in degrees
-course::							Course over ground in degrees
-time::								Current time formated as HHMMSS.SS -- use date_time to get the parsed version
-date::								Current date formated as DDMMYY -- use date_time to get the parsed version
+last_nmea::  			The last NMEA sentence name (without "$GP") parsed with the read method.
+quality::				0 = invalid, 1 = GPS fix, 2 = DGPS fix
+validity::				A = ok, V = invalid
+latitude::				Latitude
+lat_ref::				North/South (N/S)
+longitude::				Longitude
+long_ref::				East/West (E/W)
+altitude::				Current altitude
+alt_unit::				Altitude height unit of measure (i.e. M = Meters)
+speed::					Speed over ground in knots
+heading::				Heading, in degrees
+course::				Course over ground in degrees
+time::					Current time formated as HHMMSS.SS -- use date_time to get the parsed version
+date::					Current date formated as DDMMYY -- use date_time to get the parsed version
 local_hour_offset::		Local zone description, 00 to +/- 13 hours 
 local_minute_offset::	Local zone minutes description (same sign as hours) 
-num_sat::							The number of satellites in view
-satellites::					An array with id, elevation, azimuth and SNR for each satellite
-height_geoid::				Height of geoid above WGS84 ellipsoid
+num_sat::				The number of satellites in view
+satellites::			An array with id, elevation, azimuth and SNR for each satellite
+height_geoid::			Height of geoid above WGS84 ellipsoid
 height_geoid_unit::		Unit of measure (i.e. M = Meters)
-last_dgps::						Time since last DGPS update
-dgps::								DGPS reference station id
-mode::								M = Manual (forced to operate in 2D or 3D) A = Automatic (3D/2D)
-mode_dimension::			1 = Fix not available, 2 = 2D, 3 = 3D
-hdop::								Horizontal Dilution of Precision
-pdop::								Positional Dilution of Precision
-vdop::								Vertical Dilution of Precision
-msg_count::						Total number of messages of this type in this cycle
-msg_num::							Message number
-variation::						Magnetic variation
-var_direction::				Magnetic variation direction (i.e E = East)
+last_dgps::				Time since last DGPS update
+dgps::					DGPS reference station id
+mode::					M = Manual (forced to operate in 2D or 3D) A = Automatic (3D/2D)
+mode_dimension::		1 = Fix not available, 2 = 2D, 3 = 3D
+hdop::					Horizontal Dilution of Precision
+pdop::					Positional Dilution of Precision
+vdop::					Vertical Dilution of Precision
+msg_count::				Total number of messages of this type in this cycle
+msg_num::				Message number
+variation::				Magnetic variation
+var_direction::			Magnetic variation direction (i.e E = East)
 
 == Date and Time
 GPS modules provide the current time and date strings in the UTC timezone. 
