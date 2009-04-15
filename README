@@ -60,6 +60,10 @@ GPS modules provide the current time and date strings in the UTC timezone.
 This date_time method which is the DateTime object version, still in the UTC timezone.
 
 == Install
+You need RubyGems 1.2.0 to install it remotely from the GitHub repository.
+
+  gem sources -a http://gems.github.com
+  
   gem install ruby-serialgps
   
 == Examples
