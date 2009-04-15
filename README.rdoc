@@ -66,13 +66,13 @@ Date:
 
 Instead of parsing these yourself, the <code>date_time</code> method will convert 
 these strings into a DateTime object with the timezone set to UTC.
-	require "serialgps"
+ require "serialgps"
 	
-	gps = SerialGPS.new("/dev/ttyUSB0")
- 	
- 	...
- 	
-	puts gps.date_time
+ gps = SerialGPS.new("/dev/ttyUSB0")
+
+ ...
+
+ puts gps.date_time
 
 == Install
 
@@ -93,28 +93,28 @@ Here's a simple example of
 === Simple GPS dump
 This uses the internal live_gps_dump method to show live GPS data in the console
 	
-	require "serialgps"
-	
-	device = "/dev/ttyUSB0"
-	gps = SerialGPS.new(device)
-	gps.live_gps_dump
+ require "serialgps"
+
+ device = "/dev/ttyUSB0"
+ gps = SerialGPS.new(device)
+ gps.live_gps_dump
 
 === Print Latitude and Longitude
 A program that prints latitude and longitude data to the console as soon as it's available.
 
-	require "serialgps"
-	
-	device = "/dev/ttyUSB0"
-	gps = SerialGPS.new(device)
-	
-	puts "Your current position:"
-	while true
-	   data = gps.read
-	   if data.key?(:latitude)
-	      puts "Latitude: #{data[:latitude]}#{data[:lat_ref]}\t"
-	      puts "Longitude: #{data[:longitude]}#{data[:long_ref]}\n"
-	   end
-	end
+ require "serialgps"
+
+ device = "/dev/ttyUSB0"
+ gps = SerialGPS.new(device)
+
+ puts "Your current position:"
+ while true
+    data = gps.read
+    if data.key?(:latitude)
+       puts "Latitude: #{data[:latitude]}#{data[:lat_ref]}\t"
+       puts "Longitude: #{data[:longitude]}#{data[:long_ref]}\n"
+    end
+ end
 
 
 
