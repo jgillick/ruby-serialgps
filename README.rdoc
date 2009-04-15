@@ -56,8 +56,16 @@ variation::				Magnetic variation
 var_direction::			Magnetic variation direction (i.e E = East)
 
 == Date and Time
-GPS modules provide the current time and date strings in the UTC timezone. 
-This date_time method which is the DateTime object version, still in the UTC timezone.
+GPS modules provide the current time and date (UTC) strings in the following format:
+
+Time:
+ HHMMSS.SS
+
+Date:
+ DDMMYY
+
+Instead of parsing these yourself, the <code>date_time</code> method will convert the 
+date and time strings into a DateTime object with the timezone set to UTC.
 
 == Install
 
