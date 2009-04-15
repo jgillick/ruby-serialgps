@@ -75,7 +75,7 @@ You need RubyGems 1.2.0 to install it remotely from the GitHub repository.
   gem sources -a http://gems.github.com
   gem install jgillick-ruby-serialgps
   
-=== Local Install
+=== Locally
 After downloading ruby-serialgps.gem
 
    gem install ruby-serialgps.gem
@@ -83,7 +83,7 @@ After downloading ruby-serialgps.gem
 == Examples
 Here's a simple example of 
 
-=== Simple dump
+=== Simple GPS dump
 This uses the internal live_gps_dump method to show live GPS data in the console
 	
 	require "serialgps"
