@@ -64,8 +64,15 @@ Time:
 Date:
  DDMMYY
 
-Instead of parsing these yourself, the <code>date_time</code> method will convert the 
-date and time strings into a DateTime object with the timezone set to UTC.
+Instead of parsing these yourself, the <code>date_time</code> method will convert 
+these strings into a DateTime object with the timezone set to UTC.
+	require "serialgps"
+	
+	gps = SerialGPS.new("/dev/ttyUSB0")
+ 	
+ 	...
+ 	
+ 	gps.date_time
 
 == Install
 
