@@ -1,0 +1,96 @@
+= Ruby GPSSerial
+This library provides an easy way to get GPS data from your serial GPS unit. 
+
+== Description
+Uses ruby-serialport to connect to a standard serial GPS unit and parses the NMEA sentences into an easy to read hash.
+
+=== NMEA 
+Currently it only parses the following NMEA sentenses:
+* $GPGGA
+* $GPRMC
+* $GPGLL
+* $GPRMA
+* $GPGSA
+* $GPGSV
+* $GPHDT
+* $GPZDA
+
+=== GPS Data Hash
+Calling <code>read</code> or <code>get_data</code> will return a hash with some or all of the keys listed below. Each time
+you call one of those methods, more NMEA sentences will be parsed and added to the hash. 
+You may have to call <code>read</code> multiple times in a loop until your data is available.
+
+<code>get_data</code> is a wrapper function that will call <code>read</code> in a loop until <em>at least</em> the $GPGGA and $GPRMC 
+sentences are parsed.
+
+last_nmea::  					The last NMEA sentence name (without "$GP") parsed with the read method.
+quality::							0 = invalid, 1 = GPS fix, 2 = DGPS fix
+validity::						A = ok, V = invalid
+latitude::						Latitude
+lat_ref::							North/South (N/S)
+longitude::						Longitude
+long_ref::						East/West (E/W)
+altitude::						Current altitude
+alt_unit::						Altitude height unit of measure (i.e. M = Meters)
+speed::								Speed over ground in knots
+heading::							Heading, in degrees
+course::							Course over ground in degrees
+time::								Current time formated as HHMMSS.SS -- use date_time to get the parsed version
+date::								Current date formated as DDMMYY -- use date_time to get the parsed version
+local_hour_offset::		Local zone description, 00 to +/- 13 hours 
+local_minute_offset::	Local zone minutes description (same sign as hours) 
+num_sat::							The number of satellites in view
+satellites::					An array with id, elevation, azimuth and SNR for each satellite
+height_geoid::				Height of geoid above WGS84 ellipsoid
+height_geoid_unit::		Unit of measure (i.e. M = Meters)
+last_dgps::						Time since last DGPS update
+dgps::								DGPS reference station id
+mode::								M = Manual (forced to operate in 2D or 3D) A = Automatic (3D/2D)
+mode_dimension::			1 = Fix not available, 2 = 2D, 3 = 3D
+hdop::								Horizontal Dilution of Precision
+pdop::								Positional Dilution of Precision
+vdop::								Vertical Dilution of Precision
+msg_count::						Total number of messages of this type in this cycle
+msg_num::							Message number
+variation::						Magnetic variation
+var_direction::				Magnetic variation direction (i.e E = East)
+
+== Date and Time
+GPS modules provide the current time and date strings in the UTC timezone. 
+This date_time method which is the DateTime object version, still in the UTC timezone.
+
+== Install
+  gem install ruby-serialgps
+  
+== Examples
+Here's a simple example of 
+
+=== Simple dump
+This uses the internal live_gps_dump method to show live GPS data in the console
+	
+	require "serialgps"
+	
+	device = "/dev/ttyUSB0"
+	gps = SerialGPS.new(device)
+	gps.live_gps_dump
+
+=== Print Latitude
+A program that prints latitude data to the console as soon as it's available.
+
+	require "serialgps"
+	
+	device = "/dev/ttyUSB0"
+	gps = SerialGPS.new(device)
+	
+	puts "Your current position:"
+	while true
+	   data = gps.read
+	   if data.key?(:latitude)
+	      puts "Latitude: #{data[:latitude]}#{data[:lat_ref]}\t"
+	      puts "Longitude: #{data[:longitude]}#{data[:long_ref]}\n"
+	   end
+	end
+
+
+
+
