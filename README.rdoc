@@ -84,8 +84,8 @@ This uses the internal live_gps_dump method to show live GPS data in the console
 	gps = SerialGPS.new(device)
 	gps.live_gps_dump
 
-=== Print Latitude
-A program that prints latitude data to the console as soon as it's available.
+=== Print Latitude and Longitude
+A program that prints latitude and longitude data to the console as soon as it's available.
 
 	require "serialgps"
 	
