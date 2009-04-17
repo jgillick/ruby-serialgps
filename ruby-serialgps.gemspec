@@ -10,6 +10,6 @@ Gem::Specification.new do |s|
    
    s.has_rdoc = true
    s.files = [ "gpsdump.rb", "lib/serialgps.rb", "README.rdoc" ]
-   s.add_dependency("serialport", ">= 0.7.0")
+   s.add_dependency("ruby-serialport", ">= 0.7.0")
    
 end 
