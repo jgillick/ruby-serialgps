@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
    s.description = "Read NMEA data from standard serial GPS modules and provides the data as a hash."
    
    s.has_rdoc = true
-   s.files = [ "gpsdump.rb", "lib/serialgps.rb", "README" ]
+   s.files = [ "gpsdump.rb", "lib/serialgps.rb", "README.rdoc" ]
    s.add_dependency("serialport", ">= 0.7.0")
    
 end 
