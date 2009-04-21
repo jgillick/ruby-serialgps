@@ -93,6 +93,7 @@ Here's a simple example of
 === Simple GPS dump
 This uses the internal live_gps_dump method to show live GPS data in the console
 	
+ require "rubygems"
  require "serialgps"
 
  device = "/dev/ttyUSB0"
@@ -102,6 +103,7 @@ This uses the internal live_gps_dump method to show live GPS data in the console
 === Print Latitude and Longitude
 A program that prints latitude and longitude data to the console as soon as it's available.
 
+ require "rubygems"
  require "serialgps"
 
  device = "/dev/ttyUSB0"
