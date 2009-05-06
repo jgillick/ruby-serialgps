@@ -169,7 +169,7 @@ class SerialGPS
 		while true do
 			begin
 				read
-	
+
 				# Clear previous data
 				if rows > 0
 					$stdout.print "\e[#{rows}A\e[E\e[J"
@@ -183,25 +183,26 @@ class SerialGPS
 					date = date.strftime("%b %d %I:%M %p")
 				end
 				
-				num_sat = data[:num_sat] || 0
-				$stdout.print "Time: #{date}		Satellites: #{num_sat}		Quality:#{data[:quality]}\n"
-				$stdout.print "Latitude: #{data[:latitude]}#{data[:lat_ref]}"
-				$stdout.print "\tLongitude: #{data[:longitude]}#{data[:long_ref]}"
-				$stdout.print "\tElevation: #{data[:altitude]}#{data[:alt_unit]}\n"
+				num_sat = @data[:num_sat] || 0
+				$stdout.print "Time: #{date}		Satellites: #{num_sat}		Quality:#{@data[:quality]}\n"
+				$stdout.print "Latitude: #{@data[:latitude]}#{@data[:lat_ref]}"
+				$stdout.print "\tLongitude: #{@data[:longitude]}#{@data[:long_ref]}"
+				$stdout.print "\tElevation: #{@data[:altitude]}#{@data[:alt_unit]}\n"
 				rows += 3
 				
 				# Satellites
-				if data.key?(:num_sat)
+				if @data.key?(:num_sat)
 					$stdout.print "-- Satellites --\n"
-					data[:num_sat].times do | i | 
+					
+					@data[:num_sat].times do | i | 
 						
-						if data[:num_sat][:satellites].size > i
-							sat = data[:num_sat][:satellites][i]
+						if @data.key?(:satellites) && @data[:satellites].size > i
+							sat = @data[:satellites][i]
 							rows += 1
 							
 							$stdout.print "#{sat[:id]}: "
 							$stdout.print "Elevation: #{sat[:elevation]}"
-							$stdout.print "\tAzimuth: #{sat[:azimuth]}\n"
+							$stdout.print "\t\tAzimuth: #{sat[:azimuth]}\n"
 						end
 					end
 					rows += 1
@@ -238,6 +239,27 @@ class SerialGPS
 		date
 	end
 	
+	# Convert a Lat or Long NMEA coordinate to decimal
+	def latLngToDecimal(coord)
+		coord = coord.to_s
+		decimal = nil
+		negative = (coord.to_i < 0)
+		
+		# Find parts
+		if coord =~ /^-?([0-9]*?)([0-9]{2,2}\.[0-9]*)$/
+			deg = $1.to_i # degrees
+			min = $2.to_f # minutes & seconds
+			
+			# Calculate
+			decimal = deg + (min / 60)
+			if negative
+				decimal *= -1
+			end
+		end
+		
+		decimal
+	end
+	
 	# Parse a raw NMEA sentence and respond with the data in a hash
 	def parse_NMEA(raw)
 		data = { :last_nmea => nil }
@@ -267,10 +289,10 @@ class SerialGPS
 		case type
 			when "GGA"
 				data[:last_nmea] = type
-				data[:time]					= line.shift
-				data[:latitude]			= line.shift
+				data[:time]				= line.shift
+				data[:latitude]			= latLngToDecimal(line.shift)
 				data[:lat_ref]			= line.shift
-				data[:longitude]		= line.shift
+				data[:longitude]		= latLngToDecimal(line.shift)
 				data[:long_ref]			= line.shift
 				data[:quality]			= line.shift
 				data[:num_sat]			= line.shift.to_i
@@ -286,9 +308,9 @@ class SerialGPS
 				data[:last_nmea] = type
 				data[:time]			= line.shift
 				data[:validity]		= line.shift
-				data[:latitude]		= line.shift
+				data[:latitude]		= latLngToDecimal(line.shift)
 				data[:lat_ref]		= line.shift
-				data[:longitude]	= line.shift
+				data[:longitude]	= latLngToDecimal(line.shift)
 				data[:long_ref]		= line.shift
 				data[:speed]		= line.shift
 				data[:course]		= line.shift
@@ -298,18 +320,18 @@ class SerialGPS
 				
 			when "GLL"
 				data[:last_nmea] 	= type
-				data[:latitude]		= line.shift
+				data[:latitude]		= latLngToDecimal(line.shift)
 				data[:lat_ref]		= line.shift
-				data[:longitude]	= line.shift
+				data[:longitude]	= latLngToDecimal(line.shift)
 				data[:long_ref]		= line.shift
 		  	data[:time]				= line.shift
 				
 			when "RMA"
 				data[:last_nmea] = type
 				line.shift # data status
-				data[:latitude]		= line.shift
+				data[:latitude]		= latLngToDecimal(line.shift)
 				data[:lat_ref]		= line.shift
-				data[:longitude]	= line.shift
+				data[:longitude]	= latLngToDecimal(line.shift)
 				data[:long_ref]		= line.shift
 		  		line.shift # not used
 		  		line.shift # not used
