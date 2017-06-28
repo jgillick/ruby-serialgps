@@ -393,7 +393,7 @@ class SerialGPS
 				month	= line.shift
 				year	= line.shift
 				if year.size > 2
-					year = [2, 2]
+					year = year[2, 2]
 				end
 				data[:date] = "#{day}#{month}#{year}"
 				
